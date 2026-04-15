@@ -1,0 +1,9 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<p>Це головна сторінка</p>
+<ul>
+    <li><a href="{% url 'page1' %}">Перейти на сторінку 1</a></li>
+    <li><a href="{% url 'page2' %}">Перейти на сторінку 2</a></li>
+</ul>
+{% endblock %}
