@@ -1,17 +1,139 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
-    <title>{{ title }}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}PCShop{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'myapp/css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
-<h1 style="text-align:center">{{ title }}</h1>
+<header>
+  <a href="{% url 'home' %}" class="logo">
+    <i class="fa-solid fa-bolt" style="color: #00d4ff;"></i> <span>PC</span>Shop
+  </a>
 
+  <button class="burger-menu" id="burgerToggle">
+    <i class="fa-solid fa-bars"></i>
+  </button>
 
-<hr>
+  <nav id="navMenu">
+    <a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Головна</a>
 
-{% block content %}
-{% endblock %}
+    <div class="dropdown">
+      <a href="{% url 'catalog' %}" class="dropdown-btn-link">
+        <i class="fa-solid fa-microchip"></i> Товари
+        <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; margin-left: 4px;"></i>
+      </a>
+      <div class="dropdown-menu">
+        <a href="{% url 'catalog' %}" style="font-weight: bold; border-bottom: 1px solid #eee; color: #00d4ff;">
+          <i class="fa-solid fa-border-all"></i> Всі товари
+        </a>
+        {% for cat in categories %}
+          <a href="{% url 'category_detail' cat.slug %}">{{ cat.name }}</a>
+        {% empty %}
+          <a href="#">Категорії відсутні</a>
+        {% endfor %}
+      </div>
+    </div>
 
+    <a href="#"><i class="fa-solid fa-cart-shopping"></i> Кошик</a>
+    <a href="#"><i class="fa-solid fa-user"></i> Увійти</a>
+  </nav>
+</header>
+
+{% if messages %}
+<div class="messages">
+  {% for message in messages %}
+    <div class="message {{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer>
+  <div class="footer-grid">
+
+    <div class="footer-brand">
+      <div class="logo"><i class="fa-solid fa-bolt" style="color: #00d4ff;"></i> <span>PC</span>Shop</div>
+      <p>Ваш надійний магазин комп'ютерних деталей. Найкращі бренди за найкращими цінами в Україні.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Каталог</h4>
+      <ul>
+        {% for cat in categories %}
+          <li><a href="{% url 'category_detail' cat.slug %}">{{ cat.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Покупцям</h4>
+      <ul>
+        <li><a href="#">Доставка і оплата</a></li>
+        <li><a href="#">Гарантія</a></li>
+        <li><a href="#">Повернення</a></li>
+        <li><a href="{% url 'catalog' %}">Всі товари</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Контакти</h4>
+      <ul>
+        <li><i class="fa-solid fa-phone"></i> +380 44 123-45-67</li>
+        <li><i class="fa-solid fa-envelope"></i> info@pcshop.ua</li>
+        <li><i class="fa-solid fa-location-dot"></i> м. Луцьк, вул. Шевченка, 1</li>
+        <li><i class="fa-solid fa-clock"></i> Пн–Сб: 9:00–20:00</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 PCShop. Всі права захищено.</p>
+    <p>Зроблено в Україні 🇺🇦</p>
+  </div>
+</footer>
+<script>
+  const burgerToggle = document.getElementById('burgerToggle');
+  const navMenu = document.getElementById('navMenu');
+  const dropdownLink = document.querySelector('.dropdown-btn-link');
+  const dropdownMenu = document.querySelector('.dropdown-menu');
+
+  burgerToggle.addEventListener('click', function() {
+    navMenu.classList.toggle('active');
+    const icon = burgerToggle.querySelector('i');
+    if (navMenu.classList.contains('active')) {
+      icon.className = 'fa-solid fa-xmark';
+    } else {
+      icon.className = 'fa-solid fa-bars';
+
+      dropdownMenu.classList.remove('open');
+    }
+  });
+
+  dropdownLink.addEventListener('click', function(e) {
+
+    if (window.innerWidth <= 768) {
+      e.preventDefault();
+      dropdownMenu.classList.toggle('open');
+
+      const arrowIcon = dropdownLink.querySelector('.fa-chevron-down, .fa-chevron-up');
+      if (arrowIcon) {
+        if (dropdownMenu.classList.contains('open')) {
+          arrowIcon.className = 'fa-solid fa-chevron-up';
+        } else {
+          arrowIcon.className = 'fa-solid fa-chevron-down';
+        }
+      }
+    }
+  });
+</script>
 </body>
 </html>

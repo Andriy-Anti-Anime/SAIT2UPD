@@ -1,21 +1,32 @@
 from django.shortcuts import render
+from .models import Category, Product
+
 
 def home(request):
-    context = {
-        'title': 'Головна сторінка'
-    }
-    return render(request, 'myapp/home.html', context)
+    categories = Category.objects.all()
+    products = Product.objects.filter(is_available=True).order_by('-created_at')[:4]
+    return render(request, 'myapp/home.html', {
+        'categories': categories,
+        'products': products,
+    })
 
 
-def page1(request):
-    context = {
-        'title': 'Сторінка 1'
-    }
-    return render(request, 'myapp/page1.html', context)
+def category_detail(request, slug):
+    categories = Category.objects.all()
+    category = Category.objects.get(slug=slug)
+    products = Product.objects.filter(category=category, is_available=True)
+    return render(request, 'myapp/category.html', {
+        'categories': categories,
+        'category': category,
+        'products': products,
+    })
 
 
-def page2(request):
-    context = {
-        'title': 'Сторінка 2'
-    }
-    return render(request, 'myapp/page2.html', context)
+def catalog(request):
+    categories = Category.objects.all()
+    products = Product.objects.filter(is_available=True)
+
+    return render(request, 'myapp/catalog.html', {
+        'categories': categories,
+        'products': products,
+    })

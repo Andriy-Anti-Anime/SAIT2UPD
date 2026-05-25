@@ -1,0 +1,93 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}{{ category.name }} — PCShop{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="{% url 'home' %}">Головна</a>
+      <span>›</span>
+      <a href="{% url 'catalog' %}">Товари</a>
+      <span>›</span>
+      <span>{{ category.name }}</span>
+    </div>
+    <h1>{{ category.name }}</h1>
+    {% if category.description %}
+      <p>{{ category.description }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="container" style="padding-bottom: 60px;">
+
+  <div style="margin-bottom: 15px; color: #777; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+    <i class="fa-solid fa-filter"></i> Фільтр за категоріями:
+  </div>
+
+  <div class="filter-bar">
+    <a href="{% url 'catalog' %}" class="filter-btn">⚡ Всі товари</a>
+    {% for cat in categories %}
+      <a href="{% url 'category_detail' cat.slug %}"
+         class="filter-btn {% if cat.slug == category.slug %}active{% endif %}">
+        {{ cat.name }}
+      </a>
+    {% endfor %}
+  </div>
+
+  {% if products %}
+    <p class="results-count">Знайдено {{ products.count }} товарів відповідної категорії</p>
+
+    <div class="products-grid">
+      {% for product in products %}
+      <div class="product-card">
+
+        <div class="product-img">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <div style="font-size: 3.5rem; color: #cbd5e1;">
+              {% if 'відео' in category.name|lower %}<i class="fa-solid fa-gamepad"></i>
+              {% elif 'процес' in category.name|lower %}<i class="fa-solid fa-microchip"></i>
+              {% elif 'пам' in category.name|lower %}<i class="fa-solid fa-memory"></i>
+              {% else %}<i class="fa-solid fa-box-open"></i>{% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="product-body">
+          {% if product.brand %}
+            <div class="product-brand">{{ product.brand }}</div>
+          {% endif %}
+          <div class="product-name">{{ product.name }}</div>
+          <div class="product-price">{{ product.price }} ₴</div>
+          {% if product.stock == 0 %}
+            <div class="product-stock-no">● Немає в наявності</div>
+          {% elif product.stock <= 3 %}
+            <div class="product-stock-low">● Мало ({{ product.stock }} шт.)</div>
+          {% else %}
+            <div class="product-stock-ok">● В наявності</div>
+          {% endif %}
+        </div>
+
+        <div class="product-footer">
+          <a href="#" class="btn btn-outline">Детальніше</a>
+          <a href="#" class="btn btn-primary">🛒 Купити</a>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+  <div class="empty">
+    <div class="empty-icon"><i class="fa-solid fa-inbox"></i></div>
+    <p>В цій категорії поки немає товарів</p>
+    <a href="{% url 'catalog' %}" class="btn btn-primary" style="margin-top:16px;">До повного каталогу</a>
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

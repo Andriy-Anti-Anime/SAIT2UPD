@@ -1,9 +1,138 @@
 {% extends 'myapp/base.html' %}
 
+{% block title %}PCShop — Комп'ютерні деталі{% endblock %}
+
 {% block content %}
-<p>Це головна сторінка</p>
-<ul>
-    <li><a href="{% url 'page1' %}">Перейти на сторінку 1</a></li>
-    <li><a href="{% url 'page2' %}">Перейти на сторінку 2</a></li>
-</ul>
+
+<section class="hero">
+  <h1>Деталі для ПК<br>від <span>провідних брендів</span></h1>
+  <p>Відеокарти, процесори, пам'ять та багато іншого.<br>Швидка доставка по всій Україні.</p>
+  <div class="hero-btns">
+    <a href="{% url 'catalog' %}" class="btn btn-primary"><i class="fa-solid fa-box-open"></i> Переглянути каталог</a>
+    <a href="#products" class="btn btn-outline"><i class="fa-solid fa-fire"></i> Популярні товари</a>
+  </div>
+</section>
+
+<section class="section" id="categories">
+  <div class="container">
+    <h2 class="section-title">Категорії</h2>
+    <p class="section-subtitle">Оберіть потрібну категорію комплектуючих</p>
+
+    {% if categories %}
+    <div class="categories-grid">
+      {% for cat in categories %}
+      <a href="{% url 'category_detail' cat.slug %}" class="cat-card">
+        <div class="cat-icon">
+          {% if 'відео' in cat.name|lower %}
+            <i class="fa-solid fa-gamepad" style="color: #00d4ff;"></i>
+          {% elif 'процес' in cat.name|lower %}
+            <i class="fa-solid fa-microchip" style="color: #f1c40f;"></i>
+          {% elif 'пам' in cat.name|lower or 'ram' in cat.name|lower %}
+            <i class="fa-solid fa-memory" style="color: #e74c3c;"></i>
+          {% elif 'накопич' in cat.name|lower or 'ssd' in cat.name|lower %}
+            <i class="fa-solid fa-hard-drive" style="color: #2ecc71;"></i>
+          {% elif 'матер' in cat.name|lower %}
+            <i class="fa-solid fa-server" style="color: #9b59b6;"></i>
+          {% elif 'кулер' in cat.name|lower or 'охол' in cat.name|lower %}
+            <i class="fa-solid fa-snowflake" style="color: #3498db;"></i>
+          {% else %}
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+          {% endif %}
+        </div>
+        <div class="cat-name">{{ cat.name }}</div>
+        <div class="cat-count">{{ cat.products.count }} товарів</div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty">
+      <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+      <p>Категорії ще не додані. Зайдіть в <a href="/admin/">адмінку</a>.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="products-section" id="products">
+  <div class="container">
+    <h2 class="section-title">Останні надходження</h2>
+    <p class="section-subtitle">Найбільш затребувані комплектуючі</p>
+
+    {% if products %}
+    <div class="products-grid">
+      {% for product in products %}
+      <div class="product-card">
+
+        <div class="product-img">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <div style="font-size: 3.5rem; color: #cbd5e1;">
+              {% if 'відео' in product.category.name|lower %}<i class="fa-solid fa-gamepad"></i>
+              {% elif 'процес' in product.category.name|lower %}<i class="fa-solid fa-microchip"></i>
+              {% elif 'пам' in product.category.name|lower %}<i class="fa-solid fa-memory"></i>
+              {% else %}<i class="fa-solid fa-box-open"></i>{% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="product-body">
+          {% if product.brand %}
+            <div class="product-brand">{{ product.brand }}</div>
+          {% endif %}
+          <div class="product-name">{{ product.name }}</div>
+          <div class="product-price">{{ product.price }} ₴</div>
+          {% if product.stock == 0 %}
+            <div class="product-stock-no">● Немає в наявності</div>
+          {% elif product.stock <= 3 %}
+            <div class="product-stock-low">● Мало ({{ product.stock }} шт.)</div>
+          {% else %}
+            <div class="product-stock-ok">● В наявності</div>
+          {% endif %}
+        </div>
+
+        <div class="product-footer">
+          <a href="#" class="btn btn-outline">Детальніше</a>
+          <a href="#" class="btn btn-primary">🛒 Купити</a>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty">
+      <div class="empty-icon"><i class="fa-solid fa-basket-shopping"></i></div>
+      <p>Товари ще не додані. Зайдіть в <a href="/admin/">адмінку</a>.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="advantages">
+  <div class="container">
+    <div class="advantages-grid">
+      <div class="adv-card">
+        <div class="adv-icon" style="color: #00d4ff;"><i class="fa-solid fa-truck-fast"></i></div>
+        <div class="adv-title">Швидка доставка</div>
+        <div class="adv-text">По всій Україні протягом 1–3 робочих днів</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon" style="color: #2ecc71;"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="adv-title">Офіційна гарантія</div>
+        <div class="adv-text">Гарантія виробника на всі товари</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon" style="color: #f1c40f;"><i class="fa-solid fa-credit-card"></i></div>
+        <div class="adv-title">Зручна оплата</div>
+        <div class="adv-text">Картка, готівка або оплата при отриманні</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon" style="color: #e74c3c;"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+        <div class="adv-title">Технічна підтримка</div>
+        <div class="adv-text">Безкоштовні консультації від спеціалістів</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
