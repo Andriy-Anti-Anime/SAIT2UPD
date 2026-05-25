@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Category, Product
 
 
@@ -29,4 +29,14 @@ def catalog(request):
     return render(request, 'myapp/catalog.html', {
         'categories': categories,
         'products': products,
+    })
+
+
+def product_detail(request, slug):
+    categories = Category.objects.all()
+    product = get_object_or_404(Product, slug=slug)
+
+    return render(request, 'myapp/product_detail.html', {
+        'categories': categories,
+        'product': product
     })

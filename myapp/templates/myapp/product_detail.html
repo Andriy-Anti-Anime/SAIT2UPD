@@ -1,0 +1,70 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}{{ product.name }} — PCShop{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 24px;">
+    
+    <div class="breadcrumb" style="margin-bottom: 24px;">
+        <a href="{% url 'home' %}">Головна</a>
+        <span>›</span>
+        <a href="{% url 'catalog' %}">Товари</a>
+        <span>›</span>
+        <a href="{% url 'category_detail' product.category.slug %}">{{ product.category.name }}</a>
+        <span>›</span>
+        <span style="color: #555;">{{ product.name }}</span>
+    </div>
+
+    <div class="product-detail-grid">
+        
+        <div class="detail-img">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <div style="font-size: 7rem; color: #cbd5e1;">
+                    {% if 'відео' in product.category.name|lower %}<i class="fa-solid fa-gamepad"></i>
+                    {% elif 'процес' in product.category.name|lower %}<i class="fa-solid fa-microchip"></i>
+                    {% elif 'пам' in product.category.name|lower or 'ram' in product.category.name|lower %}<i class="fa-solid fa-memory"></i>
+                    {% elif 'накопич' in product.category.name|lower or 'ssd' in product.category.name|lower %}<i class="fa-solid fa-hard-drive"></i>
+                    {% elif 'матер' in product.category.name|lower %}<i class="fa-solid fa-server"></i>
+                    {% else %}<i class="fa-solid fa-box-open"></i>{% endif %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="detail-info">
+            {% if product.brand %}
+                <span class="product-brand" style="font-size: 0.9rem; letter-spacing: 0.1em;">{{ product.brand }}</span>
+            {% endif %}
+            
+            <h1 style="font-size: 2.2rem; margin: 10px 0 15px; color: #1a1a2e; line-height: 1.3;">{{ product.name }}</h1>
+            
+            <div class="product-price" style="font-size: 2.5rem; margin-bottom: 25px; color: #e74c3c; font-weight: 700;">
+                {{ product.price }} ₴
+            </div>
+            
+            <div style="margin-bottom: 30px;">
+                {% if product.stock == 0 %}
+                    <span class="product-stock-no" style="font-size: 1.05rem; font-weight: 600;">● Немає в наявності</span>
+                {% elif product.stock <= 3 %}
+                    <span class="product-stock-low" style="font-size: 1.05rem; font-weight: 600;">● Закінчується (всього {{ product.stock }} шт.)</span>
+                {% else %}
+                    <span class="product-stock-ok" style="font-size: 1.05rem; font-weight: 600;">● В наявності на складі</span>
+                {% endif %}
+            </div>
+            
+            <div style="margin-bottom: 35px;">
+                <a href="#" class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 40px; display: inline-flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-cart-shopping"></i> Купити деталь
+                </a>
+            </div>
+
+            <div style="border-top: 1px solid #e8edf5; padding-top: 25px;">
+                <h3 style="margin-bottom: 12px; color: #1a1a2e; font-size: 1.2rem;"><i class="fa-solid fa-circle-info"></i> Опис та технічні характеристики:</h3>
+                <p style="line-height: 1.7; color: #4a5568; white-space: pre-line; font-size: 1rem;">{{ product.description }}</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

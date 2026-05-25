@@ -325,7 +325,40 @@ footer {
 .burger-menu:hover {
   color: #00d4ff;
 }
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  border: 1px solid #e8edf5;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
 
+.detail-img {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.detail-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+}
 
 @media (max-width: 768px) {
   .burger-menu {
@@ -449,5 +482,13 @@ footer {
     flex-direction: column;
     gap: 10px;
     text-align: center;
+  }
+  .product-detail-grid {
+    grid-template-columns: 1fr !important;
+    padding: 20px !important;
+    gap: 28px !important;
+  }
+  .detail-img {
+    height: 300px !important;
   }
 }
