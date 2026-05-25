@@ -1,0 +1,80 @@
+{% extends 'myapp/base.html' %}
+{% block title %}Ваш кошик комплектуючих — PCShop{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 24px;">
+    <h1 style="margin-bottom: 24px; color: #1a1a2e;"><i class="fa-solid fa-cart-shopping"></i> Кошик покупок</h1>
+
+    {% if cart_items %}
+        <div class="cart-layout-grid">
+
+            <div class="cart-items-list">
+                {% for item in cart_items %}
+                <div class="cart-item-card">
+
+                    <div class="cart-item-img">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                        {% else %}
+                            <div style="font-size: 2.5rem; color: #cbd5e1;"><i class="fa-solid fa-box-open"></i></div>
+                        {% endif %}
+                    </div>
+
+                    <div class="cart-item-details">
+                        <span class="product-brand" style="font-size: 0.75rem;">{{ item.product.brand }}</span>
+                        <h4 class="cart-item-title">{{ item.product.name }}</h4>
+                        <small style="color: #64748b;">В наявності: {{ item.product.stock }} шт.</small>
+                    </div>
+
+                    <div class="cart-quantity-controls">
+                        <a href="{% url 'cart_update' item.product.id 'decrement' %}" class="qty-btn"><i class="fa-solid fa-minus"></i></a>
+                        <span class="qty-number">{{ item.quantity }}</span>
+                        {% if item.quantity >= item.product.stock %}
+                            <span class="qty-btn disabled" title="Досягнуто ліміту складу"><i class="fa-solid fa-plus"></i></span>
+                        {% else %}
+                            <a href="{% url 'cart_update' item.product.id 'increment' %}" class="qty-btn"><i class="fa-solid fa-plus"></i></a>
+                        {% endif %}
+                    </div>
+
+                    <div class="cart-item-price-block">
+                        <div class="subtotal-label">Сума за блок</div>
+                        <div class="subtotal-price">{{ item.subtotal }} ₴</div>
+                        <small style="color: #94a3b8;">{{ item.product.price }} ₴ / шт.</small>
+                    </div>
+
+                    <a href="{% url 'cart_remove' item.product.id %}" class="cart-item-delete" title="Видалити з кошика">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary-card">
+                <h3 style="color: white; margin-bottom: 20px; font-size: 1.2rem; border-bottom: 1px solid #2a2a4a; padding-bottom: 12px;"><i class="fa-solid fa-receipt"></i> Разом до оплати</h3>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem;">
+                    <span>Всього позицій:</span>
+                    <strong style="color: white;">{{ cart_items|length }}</strong>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 24px; font-size: 1.4rem; font-weight: 700; border-top: 1px solid #2a2a4a; padding-top: 16px;">
+                    <span>Загальна сума:</span>
+                    <span style="color: #00d4ff;">{{ total_price }} ₴</span>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="alert('У Лабі 8 ми підключимо сюди оформлення реальних замовлень!')">
+                    <i class="fa-solid fa-credit-card"></i> Перейти до оформлення
+                </button>
+            </div>
+
+        </div>
+    {% else %}
+        <div class="empty" style="background: white; padding: 60px; border-radius: 16px; border: 1px solid #e8edf5;">
+            <div class="empty-icon" style="font-size: 5rem; color: #cbd5e1; margin-bottom: 16px;"><i class="fa-solid fa-basket-shopping"></i></div>
+            <p style="font-size: 1.2rem; color: #64748b; font-weight: 500;">Ваш кошик порожній. Час вибрати трохи потужного заліза!</p>
+            <a href="{% url 'catalog' %}" class="btn btn-primary" style="margin-top: 20px;"><i class="fa-solid fa-microchip"></i> Перейти до каталогу товарів</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

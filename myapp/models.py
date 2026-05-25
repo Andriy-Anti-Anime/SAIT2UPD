@@ -44,7 +44,16 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True, verbose_name='Електронна пошта')
+    subscribed_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата підписки')
 
+    class Meta:
+        verbose_name = 'Підписник'
+        verbose_name_plural = 'Підписники'
+
+    def __str__(self):
+        return self.email
 class Review(models.Model):
     product = models.ForeignKey(
         Product,

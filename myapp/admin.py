@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Review
+from .models import Category, Product, Review, NewsletterSubscriber
 
 
 @admin.register(Category)
@@ -26,3 +26,10 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ['rating']
     search_fields = ['user__username', 'product__name']
     readonly_fields = ['created_at', 'updated_at']
+
+
+@admin.register(NewsletterSubscriber)
+class NewsletterSubscriberAdmin(admin.ModelAdmin):
+    list_display = ('email', 'subscribed_at')
+    ordering = ('-subscribed_at',)
+    search_fields = ('email',)

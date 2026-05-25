@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <a href="#"><i class="fa-solid fa-cart-shopping"></i> Кошик</a>
+    <a href="{% url 'cart_detail' %}"><i class="fa-solid fa-cart-shopping"></i> Кошик</a>
     <a href="#"><i class="fa-solid fa-user"></i> Увійти</a>
   </nav>
 </header>
@@ -94,7 +94,22 @@
     </div>
 
   </div>
-
+  <div class="newsletter-container-modern">
+      <div class="newsletter-card-modern">
+        <div class="newsletter-text">
+          <h4><i class="fa-solid fa-envelope-open-text" style="color: #00d4ff;"></i> Знижки на комплектуючі</h4>
+          <p>Підпишіться на розсилку гарячих пропозицій магазину</p>
+        </div>
+        <form action="{% url 'newsletter_subscribe' %}" method="POST" class="newsletter-form-modern">
+          {% csrf_token %}
+          <div class="input-with-icon">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" name="email" placeholder="Введіть ваш Email..." required>
+          </div>
+          <button type="submit" class="btn btn-primary">Підписатися</button>
+        </form>
+      </div>
+  </div>
   <div class="footer-bottom">
     <p>© 2026 PCShop. Всі права захищено.</p>
     <p>Зроблено в Україні 🇺🇦</p>

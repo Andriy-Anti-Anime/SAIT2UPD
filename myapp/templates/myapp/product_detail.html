@@ -1,70 +1,114 @@
 {% extends 'myapp/base.html' %}
-
 {% block title %}{{ product.name }} — PCShop{% endblock %}
 
 {% block content %}
 <div class="container" style="padding: 40px 24px;">
-    
+
     <div class="breadcrumb" style="margin-bottom: 24px;">
-        <a href="{% url 'home' %}">Головна</a>
-        <span>›</span>
-        <a href="{% url 'catalog' %}">Товари</a>
-        <span>›</span>
-        <a href="{% url 'category_detail' product.category.slug %}">{{ product.category.name }}</a>
-        <span>›</span>
-        <span style="color: #555;">{{ product.name }}</span>
+        <a href="{% url 'home' %}">Головна</a> › <a href="{% url 'catalog' %}">Товари</a> › <a href="{% url 'category_detail' product.category.slug %}">{{ product.category.name }}</a> › <span style="color: #555;">{{ product.name }}</span>
     </div>
 
     <div class="product-detail-grid">
-        
         <div class="detail-img">
             {% if product.image %}
                 <img src="{{ product.image.url }}" alt="{{ product.name }}">
             {% else %}
-                <div style="font-size: 7rem; color: #cbd5e1;">
-                    {% if 'відео' in product.category.name|lower %}<i class="fa-solid fa-gamepad"></i>
-                    {% elif 'процес' in product.category.name|lower %}<i class="fa-solid fa-microchip"></i>
-                    {% elif 'пам' in product.category.name|lower or 'ram' in product.category.name|lower %}<i class="fa-solid fa-memory"></i>
-                    {% elif 'накопич' in product.category.name|lower or 'ssd' in product.category.name|lower %}<i class="fa-solid fa-hard-drive"></i>
-                    {% elif 'матер' in product.category.name|lower %}<i class="fa-solid fa-server"></i>
-                    {% else %}<i class="fa-solid fa-box-open"></i>{% endif %}
-                </div>
+                <div style="font-size: 7rem; color: #cbd5e1;"><i class="fa-solid fa-box-open"></i></div>
             {% endif %}
         </div>
-        
+
         <div class="detail-info">
             {% if product.brand %}
-                <span class="product-brand" style="font-size: 0.9rem; letter-spacing: 0.1em;">{{ product.brand }}</span>
+                <span class="product-brand">{{ product.brand }}</span>
             {% endif %}
-            
-            <h1 style="font-size: 2.2rem; margin: 10px 0 15px; color: #1a1a2e; line-height: 1.3;">{{ product.name }}</h1>
-            
-            <div class="product-price" style="font-size: 2.5rem; margin-bottom: 25px; color: #e74c3c; font-weight: 700;">
-                {{ product.price }} ₴
+            <h1 style="font-size: 2.2rem; margin: 8px 0 12px; color: #1a1a2e;">{{ product.name }}</h1>
+
+            <div style="margin-bottom: 16px; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+                <span>Рейтинг деталі:</span>
+                <strong style="color: #f1c40f;">
+                    {% if average_rating %}<i class="fa-solid fa-star"></i> {{ average_rating }} / 5.0{% else %}Ще немає оцінок{% endif %}
+                </strong>
+                <span style="color: #888; font-size: 0.9rem;">({% if reviews %}{{ reviews.count }}{% else %}0{% endif %} відгуків)</span>
             </div>
-            
-            <div style="margin-bottom: 30px;">
-                {% if product.stock == 0 %}
-                    <span class="product-stock-no" style="font-size: 1.05rem; font-weight: 600;">● Немає в наявності</span>
-                {% elif product.stock <= 3 %}
-                    <span class="product-stock-low" style="font-size: 1.05rem; font-weight: 600;">● Закінчується (всього {{ product.stock }} шт.)</span>
-                {% else %}
-                    <span class="product-stock-ok" style="font-size: 1.05rem; font-weight: 600;">● В наявності на складі</span>
-                {% endif %}
-            </div>
-            
-            <div style="margin-bottom: 35px;">
-                <a href="#" class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 40px; display: inline-flex; align-items: center; gap: 10px;">
-                    <i class="fa-solid fa-cart-shopping"></i> Купити деталь
+
+            <div class="product-price" style="font-size: 2.5rem; margin-bottom: 20px; color: #e74c3c; font-weight: 700;">{{ product.price }} ₴</div>
+
+            <div style="margin-bottom: 24px;">
+                <a href="{% url 'cart_add' product.id %}" class="btn btn-primary" style="font-size: 1.1rem; padding: 14px 40px;">
+                    <i class="fa-solid fa-cart-shopping"></i> Додати в кошик
                 </a>
             </div>
 
-            <div style="border-top: 1px solid #e8edf5; padding-top: 25px;">
-                <h3 style="margin-bottom: 12px; color: #1a1a2e; font-size: 1.2rem;"><i class="fa-solid fa-circle-info"></i> Опис та технічні характеристики:</h3>
-                <p style="line-height: 1.7; color: #4a5568; white-space: pre-line; font-size: 1rem;">{{ product.description }}</p>
+            <div style="border-top: 1px solid #e8edf5; padding-top: 20px;">
+                <h3 style="margin-bottom: 10px; color: #1a1a2e;">Характеристики:</h3>
+                <p style="line-height: 1.6; color: #555; white-space: pre-line;">{{ product.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+        <div>
+            <h3><i class="fa-solid fa-comments"></i> Відгуки покупців</h3>
+            <div style="margin-top: 20px;">
+                {% for review in reviews %}
+                    <div class="review-card-modern">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="background: #f0f4ff; color: #1a1a2e; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
+                                    {{ review.user.username|slice:":2"|upper }}
+                                </div>
+                                <strong>{{ review.user.username }}</strong>
+                            </div>
+                            <div style="color: #f1c40f; background: #fef9c3; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">
+                                {{ review.rating }} ★
+                            </div>
+                        </div>
+                        <p style="color: #475569; font-size: 0.95rem; line-height: 1.5; padding-left: 44px;">{{ review.comment }}</p>
+                        <div style="text-align: right; color: #94a3b8; font-size: 0.8rem; margin-top: 5px;">
+                            <i class="fa-regular fa-calendar"></i> {{ review.created_at|date:"d.m.Y" }}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p style="color: #888;">Цей товар ще ніхто не оцінив. Станьте першим!</p>
+                {% endfor %}
             </div>
         </div>
 
+        <div>
+            <h3><i class="fa-solid fa-pen-to-square"></i> Оцінити деталь ПК</h3>
+            {% if success_msg %}
+                <div class="message success" style="margin: 15px 0 0 0;">{{ success_msg }}</div>
+            {% endif %}
+
+            {% if error_msg %}
+                <div class="message error" style="margin: 15px 0 0 0; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">{{ error_msg }}</div>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <form method="POST" style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #e8edf5; margin-top: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.02);">
+                    {% csrf_token %}
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #1a1a2e;">Ваша оцінка деталі:</label>
+                        <div class="rating-stars-container">
+                            <input type="radio" name="rating" id="star5" value="5" required hidden><label for="star5"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" name="rating" id="star4" value="4" hidden><label for="star4"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" name="rating" id="star3" value="3" hidden><label for="star3"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" name="rating" id="star2" value="2" hidden><label for="star2"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" name="rating" id="star1" value="1" hidden><label for="star1"><i class="fa-solid fa-star"></i></label>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #1a1a2e;">Ваш коментар:</label>
+                        <textarea name="comment" rows="4" placeholder="Поділіться враженнями про роботу цього заліза (наприклад: температура в навантаженні, рівень шуму, продуктивність)..." required class="modern-textarea"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa-solid fa-paper-plane"></i> Надіслати відгук
+                    </button>
+                </form>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
