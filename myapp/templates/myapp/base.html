@@ -40,7 +40,13 @@
     </div>
 
     <a href="{% url 'cart_detail' %}"><i class="fa-solid fa-cart-shopping"></i> Кошик</a>
-    <a href="#"><i class="fa-solid fa-user"></i> Увійти</a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'profile' %}"><i class="fa-solid fa-user"></i> {{ user.first_name|default:user.username }}</a>
+    <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Вийти</a>
+  {% else %}
+    <a href="{% url 'login' %}"><i class="fa-solid fa-right-to-bracket"></i> Увійти</a>
+    <a href="{% url 'register' %}"><i class="fa-solid fa-user-plus"></i> Реєстрація</a>
+  {% endif %}
   </nav>
 </header>
 

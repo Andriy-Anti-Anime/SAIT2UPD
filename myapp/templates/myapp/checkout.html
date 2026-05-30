@@ -1,0 +1,51 @@
+{% extends 'myapp/base.html' %}
+{% block title %}Оформлення замовлення — PCShop{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 24px;">
+  <h1 style="margin-bottom: 28px; color: #1a1a2e;">
+    <i class="fa-solid fa-credit-card" style="color: #00d4ff;"></i> Оформлення замовлення
+  </h1>
+
+  <div style="display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start;">
+
+    <div style="background: white; border: 1px solid #e8edf5; border-radius: 16px; padding: 32px;">
+      <h3 style="margin-bottom: 20px; color: #1a1a2e;">Дані доставки</h3>
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 6px;">
+              {{ field.label }}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              <div style="color: #e74c3c; font-size: 0.8rem; margin-top: 4px;">{{ field.errors.0 }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 8px;">
+          <i class="fa-solid fa-check"></i> Підтвердити замовлення
+        </button>
+      </form>
+    </div>
+
+    <div style="background: #1a1a2e; border-radius: 16px; padding: 28px; color: #cbd5e1;">
+      <h3 style="color: white; margin-bottom: 20px; border-bottom: 1px solid #2a2a4a; padding-bottom: 12px;">
+        <i class="fa-solid fa-receipt"></i> Ваше замовлення
+      </h3>
+      {% for item in cart_items %}
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 0.88rem; border-bottom: 1px solid #2a2a4a;">
+          <span>{{ item.product.name }} × {{ item.quantity }}</span>
+          <span style="color: #00d4ff;">{{ item.subtotal }} ₴</span>
+        </div>
+      {% endfor %}
+      <div style="display: flex; justify-content: space-between; padding: 16px 0 0; font-size: 1.3rem; font-weight: 700;">
+        <span>Разом:</span>
+        <span style="color: #00d4ff;">{{ total_price }} ₴</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

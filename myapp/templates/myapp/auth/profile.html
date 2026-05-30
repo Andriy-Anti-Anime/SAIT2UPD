@@ -1,0 +1,87 @@
+{% extends 'myapp/base.html' %}
+{% block title %}Особистий кабінет — PCShop{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 24px;">
+
+  <div style="margin-bottom: 32px;">
+    <h1 style="font-size: 2rem; color: #1a1a2e;">
+      <i class="fa-solid fa-user-circle" style="color: #00d4ff;"></i>
+      {% if user.is_staff %}
+        Панель адміністратора
+      {% else %}
+        Особистий кабінет
+      {% endif %}
+    </h1>
+    <p style="color: #888; margin-top: 6px;">
+      {{ user.first_name }} {{ user.last_name }} ({{ user.username }}) · {{ user.email }}
+    </p>
+  </div>
+
+  <h2 style="font-size: 1.4rem; margin-bottom: 20px; color: #1a1a2e;">
+    <i class="fa-solid fa-box"></i>
+    {% if user.is_staff %}Всі замовлення{% else %}Мої замовлення{% endif %}
+  </h2>
+
+  {% if orders %}
+    {% for order in orders %}
+    <div style="background: white; border: 1px solid #e8edf5; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <span style="font-size: 1.1rem; font-weight: 700; color: #1a1a2e;">
+            Замовлення #{{ order.id }}
+          </span>
+          {% if user.is_staff %}
+            <span style="color: #888; font-size: 0.88rem; margin-left: 10px;">
+              від {{ order.user.username }}
+            </span>
+          {% endif %}
+          <span style="color: #aaa; font-size: 0.83rem; display: block; margin-top: 2px;">
+            <i class="fa-regular fa-calendar"></i> {{ order.created_at|date:"d.m.Y H:i" }}
+          </span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 1.2rem; font-weight: 700; color: #e74c3c;">
+            {{ order.total_price }} ₴
+          </span>
+          <span style="padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+            {% if order.status == 'pending' %}background: #fff3cd; color: #856404;
+            {% elif order.status == 'processing' %}background: #d1ecf1; color: #0c5460;
+            {% elif order.status == 'shipped' %}background: #cce5ff; color: #004085;
+            {% elif order.status == 'delivered' %}background: #d4edda; color: #155724;
+            {% elif order.status == 'cancelled' %}background: #f8d7da; color: #721c24;
+            {% endif %}">
+            {{ order.get_status_display }}
+          </span>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid #f0f4f8; padding-top: 14px;">
+        <div style="font-size: 0.85rem; color: #888; margin-bottom: 10px;">
+          <i class="fa-solid fa-location-dot"></i> {{ order.address }} · 
+          <i class="fa-solid fa-phone"></i> {{ order.phone }}
+        </div>
+        {% for item in order.items.all %}
+          <div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.9rem; border-bottom: 1px solid #f8f9fa;">
+            <span>{{ item.product.name }} × {{ item.quantity }}</span>
+            <span style="color: #e74c3c; font-weight: 600;">{{ item.subtotal }} ₴</span>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty" style="background: white; padding: 60px; border-radius: 16px; border: 1px solid #e8edf5;">
+      <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
+      <p>У вас ще немає замовлень</p>
+      <a href="{% url 'catalog' %}" class="btn btn-primary" style="margin-top: 16px;">
+        <i class="fa-solid fa-microchip"></i> Перейти до каталогу
+      </a>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
