@@ -123,6 +123,9 @@ def cart_detail(request):
 def cart_add(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
+    if product.stock == 0:
+        messages.error(request, f'«{product.name}» немає в наявності.')
+        return redirect(request.META.get('HTTP_REFERER', 'catalog'))
     if request.user.is_authenticated:
         cart_item, created = CartItem.objects.get_or_create(
             user=request.user,

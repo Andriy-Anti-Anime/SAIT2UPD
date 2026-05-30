@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Product, Review, NewsletterSubscriber, CartItem
+from .models import Category, Product, Review, NewsletterSubscriber, CartItem, OrderItem, Order, PasswordResetCode
 
 
 @admin.register(Category)
@@ -34,7 +34,6 @@ class NewsletterSubscriberAdmin(admin.ModelAdmin):
     list_display = ('email', 'subscribed_at')
     ordering = ('-subscribed_at',)
     search_fields = ('email',)
-from .models import Order, OrderItem, PasswordResetCode
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
